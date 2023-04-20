@@ -12,6 +12,7 @@
     <modules>
         <module>user.core</module>
         <module>user.cmd.api</module>
+        <module>user.query.api</module>
     </modules>
 
     <!--    <properties>-->
