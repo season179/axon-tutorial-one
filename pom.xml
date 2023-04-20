@@ -11,6 +11,7 @@
 
     <modules>
         <module>user.core</module>
+        <module>user.cmd.api</module>
     </modules>
 
     <!--    <properties>-->

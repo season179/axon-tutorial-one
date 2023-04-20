@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.springbank</groupId>
     <artifactId>user.core</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <name>user.core</name>
     <description>The User Core Project</description>
     <properties>
