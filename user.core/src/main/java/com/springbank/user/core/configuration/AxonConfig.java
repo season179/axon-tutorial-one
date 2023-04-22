@@ -1,15 +1,23 @@
 package com.springbank.user.core.configuration;
 
+import com.mongodb.MongoClientSettings;
+import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import org.axonframework.eventhandling.tokenstore.TokenStore;
+import org.axonframework.eventsourcing.eventstore.EmbeddedEventStore;
 import org.axonframework.eventsourcing.eventstore.EventStorageEngine;
+import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.axonframework.extensions.mongo.DefaultMongoTemplate;
+import org.axonframework.extensions.mongo.MongoTemplate;
 import org.axonframework.extensions.mongo.eventsourcing.eventstore.MongoEventStorageEngine;
 import org.axonframework.extensions.mongo.eventsourcing.tokenstore.MongoTokenStore;
 import org.axonframework.serialization.Serializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Collections;
 
 @Configuration
 public class AxonConfig {
@@ -24,11 +32,26 @@ public class AxonConfig {
     private String mongoDatabase;
 
     @Bean
-    public TokenStore getTokenStore(MongoClient client, Serializer serializer) {
+    public MongoClient mongo() {
+        var mongoClientSettings = MongoClientSettings.builder()
+                .applyToClusterSettings(builder -> builder.hosts(Collections.singletonList(
+                        new ServerAddress(this.mongoHost, this.mongoPort))))
+//                .credential(MongoCredential.createCredential("username", "database", "password".toCharArray()))
+                .build();
+        return MongoClients.create(mongoClientSettings);
+    }
+
+    @Bean
+    public MongoTemplate axonMongoTemplate() {
+        return DefaultMongoTemplate.builder()
+                .mongoDatabase(mongo(), mongoDatabase)
+                .build();
+    }
+
+    @Bean
+    public TokenStore tokenStore(Serializer serializer) {
         return MongoTokenStore.builder()
-                .mongoTemplate(DefaultMongoTemplate.builder()
-                        .mongoDatabase(client)
-                        .build())
+                .mongoTemplate(axonMongoTemplate())
                 .serializer(serializer)
                 .build();
     }
@@ -42,11 +65,11 @@ public class AxonConfig {
                 .build();
     }
 
-//    @Bean
-//    public EmbeddedEventStore eventStore(EventStorageEngine storageEngine, AxonConfiguration configuration) {
-//        return EmbeddedEventStore.builder()
-//                .storageEngine(storageEngine)
-//                .messageMonitor(configuration.messageMonitor(EventStore.class, "eventStore"))
-//                .build();
-//    }
+    @Bean
+    public EmbeddedEventStore eventStore(EventStorageEngine storageEngine, org.axonframework.config.Configuration configuration) {
+        return EmbeddedEventStore.builder()
+                .storageEngine(storageEngine)
+                .messageMonitor(configuration.messageMonitor(EventStore.class, "eventStore"))
+                .build();
+    }
 }
