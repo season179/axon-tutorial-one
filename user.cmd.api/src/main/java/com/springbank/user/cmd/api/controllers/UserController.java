@@ -1,6 +1,7 @@
 package com.springbank.user.cmd.api.controllers;
 
 import com.springbank.user.cmd.api.commands.RegisterUserCommand;
+import com.springbank.user.cmd.api.commands.RemoveUserCommand;
 import com.springbank.user.cmd.api.commands.UpdateUserCommand;
 import com.springbank.user.cmd.api.dto.BaseResponse;
 import com.springbank.user.cmd.api.dto.RegisterUserResponse;
@@ -50,6 +51,20 @@ public class UserController {
             return new ResponseEntity<>(new BaseResponse("User successfully updated."), HttpStatus.OK);
         } catch (Exception exception) {
             var safeErrorMessage = "Error while processing update user request for id: " + id;
+            System.out.println(exception.toString());
+
+            return new ResponseEntity<>(new BaseResponse(safeErrorMessage), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<BaseResponse> removeUser(@PathVariable(value = "id") String id) {
+        try {
+            commandGateway.send(new RemoveUserCommand(id));
+
+            return new ResponseEntity<>(new BaseResponse("User successfully removed"), HttpStatus.OK);
+        } catch (Exception exception) {
+            var safeErrorMessage = "Error while processing remove user request for id: " + id;
             System.out.println(exception.toString());
 
             return new ResponseEntity<>(new BaseResponse(safeErrorMessage), HttpStatus.INTERNAL_SERVER_ERROR);
