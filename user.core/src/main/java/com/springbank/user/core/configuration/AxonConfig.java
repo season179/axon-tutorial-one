@@ -4,6 +4,8 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.axonframework.eventhandling.tokenstore.TokenStore;
 import org.axonframework.eventsourcing.eventstore.EmbeddedEventStore;
 import org.axonframework.eventsourcing.eventstore.EventStorageEngine;
@@ -72,4 +74,17 @@ public class AxonConfig {
                 .messageMonitor(configuration.messageMonitor(EventStore.class, "eventStore"))
                 .build();
     }
+
+    @Bean
+    public XStream xStream() {
+        XStream xStream = new XStream(new DomDriver());
+        XStream.setupDefaultSecurity(xStream);
+        xStream.allowTypesByWildcard(new String[]{
+                "com.springbank.user.core.models.**",
+                "com.springbank.user.query.api.queries.**",
+                "com.springbank.user.query.api.dto.**"
+        });
+        return xStream;
+    }
+
 }

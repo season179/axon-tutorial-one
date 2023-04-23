@@ -25,6 +25,7 @@ public class UserQueryHandlerImpl implements UserQueryHandler {
     @Override
     public UserLookupResponse getUserById(FindUserByIdQuery query) {
         var user = userRepository.findById(query.getId());
+//        return user.isPresent() ? new UserLookupResponse(user.get()) : null;
         return user.map(UserLookupResponse::new).orElse(null);
     }
 
