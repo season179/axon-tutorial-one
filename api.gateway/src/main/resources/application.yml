@@ -1,0 +1,26 @@
+server:
+  port: 2000
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: userCmdApi
+          uri: http://localhost:8081/api/v1/user
+          predicates:
+            - Path=/api/v1/user/**
+
+        - id: userQueryApi-byId
+          uri: http://localhost:8082/api/v1/user
+          predicates:
+            - Path=/api/v1/user/**
+
+        - id: userQueryApi-search
+          uri: http://localhost:8082/api/v1/user/search
+          predicates:
+            - Path=/api/v1/user/search
+
+        - id: userQueryApi-all
+          uri: http://localhost:8082/api/v1/user/all
+          predicates:
+            - Path=/api/v1/user/all
