@@ -82,7 +82,9 @@ public class AxonConfig {
         xStream.allowTypesByWildcard(new String[]{
                 "com.springbank.user.core.models.**",
                 "com.springbank.user.query.api.queries.**",
-                "com.springbank.user.query.api.dto.**"
+                "com.springbank.user.query.api.dto.**",
+                "com.springbank.user.cmd.api.commands.**",
+                "com.springbank.user.cmd.api.dto.**",
         });
         return xStream;
     }
