@@ -24,3 +24,8 @@ spring:
           uri: http://localhost:8082/api/v1/user/all
           predicates:
             - Path=/api/v1/user/all
+
+        - id: bankAccCmdApi
+          uri: http://localhost:9091/api/v1/accounts
+          predicates:
+            - Path=/api/v1/accounts/**

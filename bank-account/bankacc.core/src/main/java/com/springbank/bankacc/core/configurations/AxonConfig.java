@@ -4,8 +4,6 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.axonframework.eventhandling.tokenstore.TokenStore;
 import org.axonframework.eventsourcing.eventstore.EmbeddedEventStore;
 import org.axonframework.eventsourcing.eventstore.EventStorageEngine;
@@ -59,11 +57,12 @@ public class AxonConfig {
     }
 
     @Bean
-    public EventStorageEngine storageEngine(MongoClient client) {
+    public EventStorageEngine storageEngine(MongoClient client, Serializer serializer) {
         return MongoEventStorageEngine.builder()
                 .mongoTemplate(DefaultMongoTemplate.builder()
                         .mongoDatabase(client)
                         .build())
+                .eventSerializer(serializer)
                 .build();
     }
 
@@ -75,18 +74,19 @@ public class AxonConfig {
                 .build();
     }
 
-    @Bean
-    public XStream xStream() {
-        XStream xStream = new XStream(new DomDriver());
-        XStream.setupDefaultSecurity(xStream);
-        xStream.allowTypesByWildcard(new String[]{
-                "com.springbank.bankacc.core.models.**",
-                "com.springbank.bankacc.query.api.queries.**",
-                "com.springbank.bankacc.query.api.dto.**",
-                "com.springbank.bankacc.cmd.api.commands.**",
-                "com.springbank.bankacc.cmd.api.dto.**",
-        });
-        return xStream;
-    }
+//    @Bean
+//    public XStream xStream() {
+//        XStream xStream = new XStream(new DomDriver());
+//        XStream.setupDefaultSecurity(xStream);
+//        xStream.allowTypesByWildcard(new String[]{
+//                "com.springbank.bankacc.core.models.**",
+//                "com.springbank.bankacc.query.api.queries.**",
+//                "com.springbank.bankacc.query.api.dto.**",
+//                "com.springbank.bankacc.cmd.api.commands.**",
+//                "com.springbank.bankacc.cmd.api.dto.**",
+//        });
+//        return xStream;
+//    }
 
 }
+
